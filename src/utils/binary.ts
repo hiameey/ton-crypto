@@ -1,25 +1,13 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-export function lpad(str: string, padString: string, length: number): string {
-    while (str.length < length) {
-        str = padString + str;
-    }
-    return str;
-}
-
 export function bytesToBits(bytes: Buffer) {
-    let res = '';
-    for (let i = 0; i < bytes.length; i++) {
-        let x = bytes.at(i)!;
-        res += lpad(x.toString(2), '0', 8);
-    }
-    return res;
+    return bytes.reduce((str, byte) => str + byte.toString(2).padStart(8, '0'), '')
 }
 
 export function bitsToBytes(src: string) {

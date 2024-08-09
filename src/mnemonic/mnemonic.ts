@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
@@ -11,7 +11,7 @@ import { getSecureRandomNumber } from '../primitives/getSecureRandom';
 import { hmac_sha512 } from '../primitives/hmac_sha512';
 import { KeyPair } from '../primitives/nacl';
 import { pbkdf2_sha512 } from '../primitives/pbkdf2_sha512';
-import { bitsToBytes, bytesToBits, lpad } from '../utils/binary';
+import { bitsToBytes, bytesToBits } from '../utils/binary';
 import { wordlist } from './wordlist';
 
 const PBKDF_ITERATIONS = 100000;
@@ -149,7 +149,7 @@ export async function mnemonicValidate(mnemonicArray: string[], password?: strin
  * Generate new Mnemonic
  * @param wordsCount number of words to generate
  * @param password mnemonic password
- * @returns 
+ * @returns
  */
 export async function mnemonicNew(wordsCount: number = 24, password?: string | null | undefined) {
 
@@ -219,7 +219,7 @@ export function mnemonicIndexesToBytes(src: number[]) {
         if (s < 0 || s >= 2028) {
             throw Error('Invalid input');
         }
-        res += lpad(s.toString(2), '0', 11);
+        res += s.toString(2).padStart(11, '0');
     }
     while (res.length % 8 !== 0) {
         res = res + '0';
@@ -229,9 +229,9 @@ export function mnemonicIndexesToBytes(src: number[]) {
 
 /**
  * Generates deterministically mnemonics
- * @param seed 
- * @param wordsCount 
- * @param password 
+ * @param seed
+ * @param wordsCount
+ * @param password
  */
 export async function mnemonicFromRandomSeed(seed: Buffer, wordsCount: number = 24, password?: string | null | undefined) {
     const bytesLength = Math.ceil(wordsCount * 11 / 8);
