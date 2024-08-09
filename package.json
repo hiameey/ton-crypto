@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "rm -fr dist && tsc --declaration",
-    "test": "jest && karma start --single-run",
+    "test": "jest",
     "release": "yarn build && yarn test && yarn publish"
   },
   "devDependencies": {
