@@ -1,11 +1,12 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
+import {crypto_sign_PUBLICKEYBYTES, crypto_sign_SECRETKEYBYTES} from 'sodium-native';
 import nacl from 'tweetnacl';
 
 export type KeyPair = {
@@ -14,11 +15,16 @@ export type KeyPair = {
 }
 
 export function keyPairFromSecretKey(secretKey: Buffer): KeyPair {
-    let res = nacl.sign.keyPair.fromSecretKey(new Uint8Array(secretKey));
+    let byteArray = new Uint8Array(secretKey);
+    if (byteArray.length !== crypto_sign_SECRETKEYBYTES) {
+        throw new Error('bad secret key size');
+    }
+
+    let publicKey = byteArray.subarray(crypto_sign_PUBLICKEYBYTES, crypto_sign_SECRETKEYBYTES);
 
     return {
-        publicKey: Buffer.from(res.publicKey),
-        secretKey: Buffer.from(res.secretKey),
+        publicKey: Buffer.from(publicKey),
+        secretKey: Buffer.from(byteArray),
     }
 }
 
