@@ -6,7 +6,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {crypto_sign_PUBLICKEYBYTES, crypto_sign_SECRETKEYBYTES} from 'sodium-native';
+import {
+    crypto_sign_PUBLICKEYBYTES,
+    crypto_sign_SECRETKEYBYTES,
+    crypto_sign_seed_keypair,
+    crypto_sign_SEEDBYTES
+} from 'sodium-native';
 import nacl from 'tweetnacl';
 
 export type KeyPair = {
@@ -15,25 +20,29 @@ export type KeyPair = {
 }
 
 export function keyPairFromSecretKey(secretKey: Buffer): KeyPair {
-    let byteArray = new Uint8Array(secretKey);
-    if (byteArray.length !== crypto_sign_SECRETKEYBYTES) {
+    if (secretKey.length !== crypto_sign_SECRETKEYBYTES) {
         throw new Error('bad secret key size');
     }
 
-    let publicKey = byteArray.subarray(crypto_sign_PUBLICKEYBYTES, crypto_sign_SECRETKEYBYTES);
-
+    let publicKey = secretKey.subarray(crypto_sign_PUBLICKEYBYTES, crypto_sign_SECRETKEYBYTES);
     return {
-        publicKey: Buffer.from(publicKey),
-        secretKey: Buffer.from(byteArray),
+        publicKey,
+        secretKey,
     }
 }
 
-export function keyPairFromSeed(secretKey: Buffer): KeyPair {
-    let res = nacl.sign.keyPair.fromSeed(new Uint8Array(secretKey));
+export function keyPairFromSeed(seed: Buffer): KeyPair {
+    if (seed.length !== crypto_sign_SEEDBYTES) {
+        throw new Error('bad seed size');
+    }
+    let publicKey = Buffer.alloc(crypto_sign_PUBLICKEYBYTES);
+    let secretKey = Buffer.alloc(crypto_sign_SECRETKEYBYTES);
+
+    crypto_sign_seed_keypair(publicKey, secretKey, seed);
 
     return {
-        publicKey: Buffer.from(res.publicKey),
-        secretKey: Buffer.from(res.secretKey),
+        publicKey,
+        secretKey,
     }
 }
 
