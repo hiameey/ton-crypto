@@ -7,6 +7,8 @@
  */
 
 import {
+    crypto_sign_BYTES,
+    crypto_sign_detached,
     crypto_sign_PUBLICKEYBYTES,
     crypto_sign_SECRETKEYBYTES,
     crypto_sign_seed_keypair,
@@ -46,8 +48,12 @@ export function keyPairFromSeed(seed: Buffer): KeyPair {
     }
 }
 
-export function sign(data: Buffer, secretKey: Buffer) {
-    return Buffer.from(nacl.sign.detached(new Uint8Array(data), new Uint8Array(secretKey)));
+export function sign(data: Buffer, secretKey: Buffer): Buffer {
+    let signature = Buffer.alloc(crypto_sign_BYTES);
+
+    crypto_sign_detached(signature, data, secretKey);
+
+    return signature
 }
 
 export function signVerify(data: Buffer, signature: Buffer, publicKey: Buffer) {
