@@ -12,7 +12,7 @@ import {
     crypto_sign_PUBLICKEYBYTES,
     crypto_sign_SECRETKEYBYTES,
     crypto_sign_seed_keypair,
-    crypto_sign_SEEDBYTES
+    crypto_sign_SEEDBYTES, crypto_sign_verify_detached
 } from 'sodium-native';
 import nacl from 'tweetnacl';
 
@@ -57,7 +57,7 @@ export function sign(data: Buffer, secretKey: Buffer): Buffer {
 }
 
 export function signVerify(data: Buffer, signature: Buffer, publicKey: Buffer) {
-    return nacl.sign.detached.verify(new Uint8Array(data), new Uint8Array(signature), new Uint8Array(publicKey));
+    return crypto_sign_verify_detached(signature, data, publicKey)
 }
 
 export function sealBox(data: Buffer, nonce: Buffer, key: Buffer) {
