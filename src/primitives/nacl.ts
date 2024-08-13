@@ -7,15 +7,19 @@
  */
 
 import {
-    crypto_secretbox_easy, crypto_secretbox_KEYBYTES, crypto_secretbox_MACBYTES, crypto_secretbox_NONCEBYTES,
+    crypto_secretbox_easy,
+    crypto_secretbox_KEYBYTES,
+    crypto_secretbox_MACBYTES,
+    crypto_secretbox_NONCEBYTES,
+    crypto_secretbox_open_easy,
     crypto_sign_BYTES,
     crypto_sign_detached,
     crypto_sign_PUBLICKEYBYTES,
     crypto_sign_SECRETKEYBYTES,
     crypto_sign_seed_keypair,
-    crypto_sign_SEEDBYTES, crypto_sign_verify_detached
+    crypto_sign_SEEDBYTES,
+    crypto_sign_verify_detached
 } from 'sodium-native';
-import nacl from 'tweetnacl';
 
 export type KeyPair = {
     publicKey: Buffer;
@@ -75,10 +79,21 @@ export function sealBox(data: Buffer, nonce: Buffer, key: Buffer) {
     return ciphertext
 }
 
-export function openBox(data: Buffer, nonce: Buffer, key: Buffer) {
-    let res = nacl.secretbox.open(data, nonce, key);
-    if (!res) {
-        return null;
+export function openBox(ciphertext: Buffer, nonce: Buffer, key: Buffer) {
+    if (ciphertext.length < crypto_secretbox_MACBYTES) {
+        throw new Error('bad ciphertext size');
     }
-    return Buffer.from(res);
+    if (key.length !== crypto_secretbox_KEYBYTES) {
+        throw new Error('bad key size');
+    }
+    if (nonce.length !== crypto_secretbox_NONCEBYTES) {
+        throw new Error('bad nonce size');
+    }
+
+    let data = Buffer.alloc(ciphertext.length - crypto_secretbox_MACBYTES);
+    if (crypto_secretbox_open_easy(data, ciphertext, nonce, key)) {
+        return data;
+    }
+
+    return null
 }
