@@ -9,7 +9,7 @@
 export { sha256, sha256_sync } from './primitives/sha256';
 export { sha512, sha512_sync } from './primitives/sha512';
 
-export { pbkdf2_sha512 } from './primitives/pbkdf2_sha512';
+export { pbkdf2_sha512, pbkdf2_sha512_sync } from './primitives/pbkdf2_sha512';
 
 export { hmac_sha512, hmac_sha512_sync } from './primitives/hmac_sha512';
 

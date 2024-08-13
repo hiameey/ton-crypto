@@ -17,3 +17,7 @@ export function pbkdf2_sha512(key: string | Buffer, salt: string | Buffer, itera
         }
     }));
 }
+
+export function pbkdf2_sha512_sync(key: string | Buffer, salt: string | Buffer, iterations: number, keyLen: number): Buffer {
+    return crypto.pbkdf2Sync(key, salt, iterations, keyLen, 'sha512');
+}
