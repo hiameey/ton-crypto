@@ -7,6 +7,7 @@
  */
 
 import {
+    crypto_secretbox_easy, crypto_secretbox_KEYBYTES, crypto_secretbox_MACBYTES, crypto_secretbox_NONCEBYTES,
     crypto_sign_BYTES,
     crypto_sign_detached,
     crypto_sign_PUBLICKEYBYTES,
@@ -61,7 +62,17 @@ export function signVerify(data: Buffer, signature: Buffer, publicKey: Buffer) {
 }
 
 export function sealBox(data: Buffer, nonce: Buffer, key: Buffer) {
-    return Buffer.from(nacl.secretbox(data, nonce, key));
+    if (key.length !== crypto_secretbox_KEYBYTES) {
+        throw new Error('bad key size');
+    }
+    if (nonce.length !== crypto_secretbox_NONCEBYTES) {
+        throw new Error('bad nonce size');
+    }
+
+    let ciphertext = Buffer.alloc(data.length + crypto_secretbox_MACBYTES);
+    crypto_secretbox_easy(ciphertext, data, nonce, key);
+
+    return ciphertext
 }
 
 export function openBox(data: Buffer, nonce: Buffer, key: Buffer) {
