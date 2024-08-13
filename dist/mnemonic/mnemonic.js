@@ -6,14 +6,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mnemonicFromRandomSeed = exports.mnemonicIndexesToBytes = exports.bytesToMnemonics = exports.bytesToMnemonicIndexes = exports.mnemonicNew = exports.mnemonicValidate = exports.mnemonicToHDSeed = exports.mnemonicToWalletKey = exports.mnemonicToPrivateKey = exports.mnemonicToSeed = exports.mnemonicToEntropy = void 0;
-const tweetnacl_1 = __importDefault(require("tweetnacl"));
 const getSecureRandom_1 = require("../primitives/getSecureRandom");
 const hmac_sha512_1 = require("../primitives/hmac_sha512");
+const nacl_1 = require("../primitives/nacl");
 const pbkdf2_sha512_1 = require("../primitives/pbkdf2_sha512");
 const binary_1 = require("../utils/binary");
 const wordlist_1 = require("./wordlist");
@@ -80,11 +77,7 @@ async function mnemonicToPrivateKey(mnemonicArray, password) {
     // }
     mnemonicArray = normalizeMnemonic(mnemonicArray);
     const seed = (await mnemonicToSeed(mnemonicArray, 'TON default seed', password));
-    let keyPair = tweetnacl_1.default.sign.keyPair.fromSeed(seed.slice(0, 32));
-    return {
-        publicKey: Buffer.from(keyPair.publicKey),
-        secretKey: Buffer.from(keyPair.secretKey)
-    };
+    return (0, nacl_1.keyPairFromSeed)(seed.subarray(0, 32));
 }
 exports.mnemonicToPrivateKey = mnemonicToPrivateKey;
 /**
@@ -95,12 +88,8 @@ exports.mnemonicToPrivateKey = mnemonicToPrivateKey;
  */
 async function mnemonicToWalletKey(mnemonicArray, password) {
     let seedPk = await mnemonicToPrivateKey(mnemonicArray, password);
-    let seedSecret = seedPk.secretKey.slice(0, 32);
-    const keyPair = tweetnacl_1.default.sign.keyPair.fromSeed(seedSecret);
-    return {
-        publicKey: Buffer.from(keyPair.publicKey),
-        secretKey: Buffer.from(keyPair.secretKey)
-    };
+    let seedSecret = seedPk.secretKey.subarray(0, 32);
+    return (0, nacl_1.keyPairFromSeed)(seedSecret);
 }
 exports.mnemonicToWalletKey = mnemonicToWalletKey;
 /**
