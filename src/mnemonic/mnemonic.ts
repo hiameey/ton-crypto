@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import nacl from 'tweetnacl';
 import { getSecureRandomNumber } from '../primitives/getSecureRandom';
 import { hmac_sha512 } from '../primitives/hmac_sha512';
-import { KeyPair } from '../primitives/nacl';
+import { KeyPair, keyPairFromSeed } from '../primitives/nacl';
 import { pbkdf2_sha512 } from '../primitives/pbkdf2_sha512';
 import { bitsToBytes, bytesToBits } from '../utils/binary';
 import { wordlist } from './wordlist';
@@ -82,11 +81,8 @@ export async function mnemonicToPrivateKey(mnemonicArray: string[], password?: s
     // }
     mnemonicArray = normalizeMnemonic(mnemonicArray);
     const seed = (await mnemonicToSeed(mnemonicArray, 'TON default seed', password));
-    let keyPair = nacl.sign.keyPair.fromSeed(seed.slice(0, 32));
-    return {
-        publicKey: Buffer.from(keyPair.publicKey),
-        secretKey: Buffer.from(keyPair.secretKey)
-    };
+
+    return keyPairFromSeed(seed.subarray(0, 32))
 }
 
 /**
@@ -97,12 +93,9 @@ export async function mnemonicToPrivateKey(mnemonicArray: string[], password?: s
  */
 export async function mnemonicToWalletKey(mnemonicArray: string[], password?: string | null | undefined): Promise<KeyPair> {
     let seedPk = await mnemonicToPrivateKey(mnemonicArray, password);
-    let seedSecret = seedPk.secretKey.slice(0, 32);
-    const keyPair = nacl.sign.keyPair.fromSeed(seedSecret);
-    return {
-        publicKey: Buffer.from(keyPair.publicKey),
-        secretKey: Buffer.from(keyPair.secretKey)
-    };
+    let seedSecret = seedPk.secretKey.subarray(0, 32);
+
+    return keyPairFromSeed(seedSecret)
 }
 
 /**
