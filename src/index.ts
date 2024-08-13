@@ -13,7 +13,10 @@ export { pbkdf2_sha512, pbkdf2_sha512_sync } from './primitives/pbkdf2_sha512';
 
 export { hmac_sha512, hmac_sha512_sync } from './primitives/hmac_sha512';
 
-export { getSecureRandomBytes, getSecureRandomWords, getSecureRandomNumber } from './primitives/getSecureRandom';
+export {
+    getSecureRandomBytes, getSecureRandomWords, getSecureRandomNumber,
+    getSecureRandomBytesSync, getSecureRandomWordsSync, getSecureRandomNumberSync
+} from './primitives/getSecureRandom';
 export { newSecureWords } from './passwords/newSecureWords';
 export { newSecurePassphrase } from './passwords/newSecurePassphrase';
 

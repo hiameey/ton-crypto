@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { getSecureRandomNumber } from '../primitives/getSecureRandom';
+import { getSecureRandomNumberSync } from '../primitives/getSecureRandom';
 import { hmac_sha512_sync } from '../primitives/hmac_sha512';
 import { KeyPair, keyPairFromSeed } from '../primitives/nacl';
 import { pbkdf2_sha512_sync } from '../primitives/pbkdf2_sha512';
@@ -159,7 +159,7 @@ export async function mnemonicNew(wordsCount: number = 24, password?: string | n
         // Regenerate new mnemonics
         mnemonicArray = [];
         for (let i = 0; i < wordsCount; i++) {
-            let ind = await getSecureRandomNumber(0, wordlist.length);
+            let ind = getSecureRandomNumberSync(0, wordlist.length);
             mnemonicArray.push(wordlist[ind]);
         }
 
