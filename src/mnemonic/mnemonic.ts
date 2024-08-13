@@ -8,7 +8,7 @@
 
 import { getSecureRandomNumber } from '../primitives/getSecureRandom';
 import { hmac_sha512 } from '../primitives/hmac_sha512';
-import {KeyPair, keyPairFromSeed} from '../primitives/nacl';
+import { KeyPair, keyPairFromSeed } from '../primitives/nacl';
 import { pbkdf2_sha512 } from '../primitives/pbkdf2_sha512';
 import { bitsToBytes, bytesToBits } from '../utils/binary';
 import { wordlist } from './wordlist';

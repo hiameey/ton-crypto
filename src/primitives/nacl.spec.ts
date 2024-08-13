@@ -1,4 +1,4 @@
-import {keyPairFromSecretKey, keyPairFromSeed, openBox, sealBox, sign, signVerify} from "./nacl";
+import { keyPairFromSecretKey, keyPairFromSeed, openBox, sealBox, sign, signVerify } from "./nacl";
 import {
     crypto_secretbox_KEYBYTES,
     crypto_secretbox_NONCEBYTES,
