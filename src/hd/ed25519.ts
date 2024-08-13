@@ -1,19 +1,19 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-import { hmac_sha512 } from "../primitives/hmac_sha512";
+import { hmac_sha512_sync } from "../primitives/hmac_sha512";
 import { HDKeysState } from "./state";
 
 const ED25519_CURVE = 'ed25519 seed';
 const HARDENED_OFFSET = 0x80000000;
 
 export async function getED25519MasterKeyFromSeed(seed: Buffer): Promise<HDKeysState> {
-    const I = await hmac_sha512(ED25519_CURVE, seed);
+    const I = hmac_sha512_sync(ED25519_CURVE, seed);
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
@@ -33,7 +33,7 @@ export async function deriveED25519HardenedKey(parent: HDKeysState, index: numbe
     const data = Buffer.concat([Buffer.alloc(1, 0), parent.key, indexBuffer]);
 
     // Derive key
-    const I = await hmac_sha512(parent.chainCode, data);
+    const I = hmac_sha512_sync(parent.chainCode, data);
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {

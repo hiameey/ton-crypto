@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
@@ -7,14 +7,14 @@
  */
 
 import { mnemonicFromRandomSeed } from "../mnemonic/mnemonic";
-import { hmac_sha512 } from "../primitives/hmac_sha512";
+import { hmac_sha512_sync } from "../primitives/hmac_sha512";
 import { HDKeysState } from "./state";
 
 const HARDENED_OFFSET = 0x80000000;
 const MNEMONICS_SEED = 'TON Mnemonics HD seed';
 
 export async function getMnemonicsMasterKeyFromSeed(seed: Buffer): Promise<HDKeysState> {
-    const I = await hmac_sha512(MNEMONICS_SEED, seed);
+    const I = hmac_sha512_sync(MNEMONICS_SEED, seed);
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {
@@ -34,7 +34,7 @@ export async function deriveMnemonicHardenedKey(parent: HDKeysState, index: numb
     const data = Buffer.concat([Buffer.alloc(1, 0), parent.key, indexBuffer]);
 
     // Derive key
-    const I = await hmac_sha512(parent.chainCode, data);
+    const I = hmac_sha512_sync(parent.chainCode, data);
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
     return {

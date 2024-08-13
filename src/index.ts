@@ -1,5 +1,5 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
@@ -11,7 +11,7 @@ export { sha512, sha512_sync } from './primitives/sha512';
 
 export { pbkdf2_sha512 } from './primitives/pbkdf2_sha512';
 
-export { hmac_sha512 } from './primitives/hmac_sha512';
+export { hmac_sha512, hmac_sha512_sync } from './primitives/hmac_sha512';
 
 export { getSecureRandomBytes, getSecureRandomWords, getSecureRandomNumber } from './primitives/getSecureRandom';
 export { newSecureWords } from './passwords/newSecureWords';

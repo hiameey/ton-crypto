@@ -1,18 +1,18 @@
 /**
- * Copyright (c) Whales Corp. 
+ * Copyright (c) Whales Corp.
  * All Rights Reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
-import { hmac_sha512 } from "../primitives/hmac_sha512";
+import { hmac_sha512_sync } from "../primitives/hmac_sha512";
 import { HDKeysState } from "./state";
 
 const SYMMETRIC_SEED = 'Symmetric key seed';
 
 export async function getSymmetricMasterKeyFromSeed(seed: Buffer): Promise<HDKeysState> {
-    const I = await hmac_sha512(SYMMETRIC_SEED, seed);
+    const I = hmac_sha512_sync(SYMMETRIC_SEED, seed);
     const IL = I.slice(32);
     const IR = I.slice(0, 32);
     return {
@@ -27,7 +27,7 @@ export async function deriveSymmetricHardenedKey(parent: HDKeysState, offset: st
     const data = Buffer.concat([Buffer.alloc(1, 0), Buffer.from(offset)]);
 
     // Derive key
-    const I = await hmac_sha512(parent.chainCode, data);
+    const I = hmac_sha512_sync(parent.chainCode, data);
     const IL = I.slice(32);
     const IR = I.slice(0, 32);
     return {

@@ -7,7 +7,7 @@
  */
 
 import { getSecureRandomNumber } from '../primitives/getSecureRandom';
-import { hmac_sha512 } from '../primitives/hmac_sha512';
+import { hmac_sha512_sync } from '../primitives/hmac_sha512';
 import { KeyPair, keyPairFromSeed } from '../primitives/nacl';
 import { pbkdf2_sha512 } from '../primitives/pbkdf2_sha512';
 import { bitsToBytes, bytesToBits } from '../utils/binary';
@@ -47,14 +47,16 @@ async function isPasswordSeed(entropy: Buffer | string) {
     return seed[0] == 1;
 }
 
-export async function mnemonicToEntropy(mnemonicArray: string[], password?: string | null | undefined) {
+export async function mnemonicToEntropy(mnemonicArray: string[], password?: string | null | undefined): Promise<Buffer> {
     // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L52
     // td::SecureString Mnemonic::to_entropy() const {
     //   td::SecureString res(64);
     //   td::hmac_sha512(join(words_), password_, res.as_mutable_slice());
     //   return res;
     // }
-    return await hmac_sha512(mnemonicArray.join(' '), password && password.length > 0 ? password : '');
+    return Promise.resolve(
+        hmac_sha512_sync(mnemonicArray.join(' '), password && password.length > 0 ? password : '')
+    )
 }
 
 export async function mnemonicToSeed(mnemonicArray: string[], seed: string, password?: string | null | undefined) {
