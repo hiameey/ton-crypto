@@ -27,23 +27,27 @@ describe('nacl', () => {
     })
 
     it('should return signature for given data', () => {
-        let secretKey = Buffer.alloc(crypto_sign_SECRETKEYBYTES, 0);
+        let secretKey = givenSecretKey();
         let data = Buffer.alloc(128, 1);
 
         let actual = sign(data, secretKey);
 
         expect(actual.length).toBe(crypto_sign_BYTES)
-        expect(actual.toString('hex')).toBe('5a56c995a84e2093c7e1328b625ebd139298cece9ece29b181235f48e405cead47dbf279419528c5d97408ab1a4a5019448405b88dc0c1bb9bcdd06ecdd19801')
+        expect(actual.toString('hex')).toBe('7ffcf089b9909db2f230dddb0fdcf2f92c538280663cfc3c447a4197824a4dc2b70dae8d60b89c73312c32cd60c82d5051956451b74c5451debfa1c0060cce0b')
     })
 
     it('should verify signature for given data', () => {
+        let pair = keyPairFromSecretKey(givenSecretKey());
         let message = Buffer.alloc(128, 1);
-        let seed = Buffer.alloc(crypto_sign_SEEDBYTES, 1);
-        let pair = keyPairFromSeed(seed);
-        let signature = sign(message, pair.secretKey);
+        let signature = Buffer.from('7ffcf089b9909db2f230dddb0fdcf2f92c538280663cfc3c447a4197824a4dc2b70dae8d60b89c73312c32cd60c82d5051956451b74c5451debfa1c0060cce0b', 'hex');
 
         let actual = signVerify(message, signature, pair.publicKey);
 
         expect(actual).toBeTruthy()
     })
 });
+
+
+function givenSecretKey(): Buffer {
+    return Buffer.from('01010101010101010101010101010101010101010101010101010101010101018a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c', 'hex');
+}
