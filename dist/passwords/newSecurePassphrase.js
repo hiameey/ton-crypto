@@ -7,9 +7,13 @@
  * LICENSE file in the root directory of this source tree.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newSecurePassphrase = void 0;
-const __1 = require("..");
+exports.newSecurePassphraseSync = exports.newSecurePassphrase = void 0;
+const newSecureWords_1 = require("./newSecureWords");
 async function newSecurePassphrase(size = 6) {
-    return (await (0, __1.newSecureWords)(size)).join('-');
+    return newSecurePassphraseSync(size);
 }
 exports.newSecurePassphrase = newSecurePassphrase;
+function newSecurePassphraseSync(size = 6) {
+    return (0, newSecureWords_1.newSecureWordsSync)(size).join('-');
+}
+exports.newSecurePassphraseSync = newSecurePassphraseSync;

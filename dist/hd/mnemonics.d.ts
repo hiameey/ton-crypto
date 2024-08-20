@@ -8,5 +8,8 @@
 /// <reference types="node" />
 import { HDKeysState } from "./state";
 export declare function getMnemonicsMasterKeyFromSeed(seed: Buffer): Promise<HDKeysState>;
+export declare function getMnemonicsMasterKeyFromSeedSync(seed: Buffer): HDKeysState;
 export declare function deriveMnemonicHardenedKey(parent: HDKeysState, index: number): Promise<HDKeysState>;
+export declare function deriveMnemonicHardenedKeySync(parent: HDKeysState, index: number): HDKeysState;
 export declare function deriveMnemonicsPath(seed: Buffer, path: number[], wordsCount?: number, password?: string | null | undefined): Promise<string[]>;
+export declare function deriveMnemonicsPathSync(seed: Buffer, path: number[], wordsCount?: number, password?: string | null | undefined): string[];

@@ -30,22 +30,34 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSecureRandomNumber = exports.getSecureRandomWords = exports.getSecureRandomBytes = void 0;
+exports.getSecureRandomNumberSync = exports.getSecureRandomNumber = exports.getSecureRandomWordsSync = exports.getSecureRandomWords = exports.getSecureRandomBytesSync = exports.getSecureRandomBytes = void 0;
 const crypto = __importStar(require("node:crypto"));
 async function getSecureRandomBytes(size) {
     return crypto.randomBytes(size);
 }
 exports.getSecureRandomBytes = getSecureRandomBytes;
+function getSecureRandomBytesSync(size) {
+    return crypto.randomBytes(size);
+}
+exports.getSecureRandomBytesSync = getSecureRandomBytesSync;
 async function getSecureRandomWords(size) {
+    return getSecureRandomWordsSync(size);
+}
+exports.getSecureRandomWords = getSecureRandomWords;
+function getSecureRandomWordsSync(size) {
     let res = new Uint16Array(size);
     crypto.randomFillSync(res);
     return res;
 }
-exports.getSecureRandomWords = getSecureRandomWords;
+exports.getSecureRandomWordsSync = getSecureRandomWordsSync;
 async function getSecureRandomNumber(min, max) {
+    return getSecureRandomNumberSync(min, max);
+}
+exports.getSecureRandomNumber = getSecureRandomNumber;
+function getSecureRandomNumberSync(min, max) {
     if (max > 9007199254740991) {
         throw new Error('Range is too large');
     }
     return crypto.randomInt(min, max);
 }
-exports.getSecureRandomNumber = getSecureRandomNumber;
+exports.getSecureRandomNumberSync = getSecureRandomNumberSync;
