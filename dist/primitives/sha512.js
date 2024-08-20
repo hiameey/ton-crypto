@@ -17,10 +17,10 @@ function sha512_sync(source) {
 }
 exports.sha512_sync = sha512_sync;
 async function sha512_fallback(source) {
-    return Promise.resolve(sha512_sync(source));
+    return sha512_sync(source);
 }
 exports.sha512_fallback = sha512_fallback;
 async function sha512(source) {
-    return Promise.resolve(sha512_sync(source));
+    return sha512_sync(source);
 }
 exports.sha512 = sha512;

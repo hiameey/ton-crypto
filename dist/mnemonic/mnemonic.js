@@ -7,7 +7,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mnemonicFromRandomSeed = exports.mnemonicIndexesToBytes = exports.bytesToMnemonics = exports.bytesToMnemonicIndexes = exports.mnemonicNew = exports.mnemonicValidate = exports.mnemonicToHDSeed = exports.mnemonicToWalletKey = exports.mnemonicToPrivateKey = exports.mnemonicToSeed = exports.mnemonicToEntropy = void 0;
+exports.mnemonicFromRandomSeed = exports.bytesToMnemonics = exports.bytesToMnemonicIndexes = exports.mnemonicNewSync = exports.mnemonicNew = exports.mnemonicValidateSync = exports.mnemonicValidate = exports.mnemonicToHDSeedSync = exports.mnemonicToHDSeed = exports.mnemonicToWalletKeySync = exports.mnemonicToWalletKey = exports.mnemonicToPrivateKeySync = exports.mnemonicToPrivateKey = exports.mnemonicToSeedSync = exports.mnemonicToSeed = void 0;
 const getSecureRandom_1 = require("../primitives/getSecureRandom");
 const hmac_sha512_1 = require("../primitives/hmac_sha512");
 const nacl_1 = require("../primitives/nacl");
@@ -15,55 +15,21 @@ const pbkdf2_sha512_1 = require("../primitives/pbkdf2_sha512");
 const binary_1 = require("../utils/binary");
 const wordlist_1 = require("./wordlist");
 const PBKDF_ITERATIONS = 100000;
-async function isPasswordNeeded(mnemonicArray) {
-    const passlessEntropy = await mnemonicToEntropy(mnemonicArray);
-    return (await isPasswordSeed(passlessEntropy)) && !(await isBasicSeed(passlessEntropy));
-}
-function normalizeMnemonic(src) {
-    return src.map((v) => v.toLowerCase().trim());
-}
-async function isBasicSeed(entropy) {
-    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L68
-    // bool Mnemonic::is_basic_seed() {
-    //   td::SecureString hash(64);
-    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON seed version", td::max(1, PBKDF_ITERATIONS / 256),
-    //                     hash.as_mutable_slice());
-    //   return hash.as_slice()[0] == 0;
-    // }
-    const seed = await (0, pbkdf2_sha512_1.pbkdf2_sha512)(entropy, 'TON seed version', Math.max(1, Math.floor(PBKDF_ITERATIONS / 256)), 64);
-    return seed[0] == 0;
-}
-async function isPasswordSeed(entropy) {
-    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L75
-    // bool Mnemonic::is_password_seed() {
-    //   td::SecureString hash(64);
-    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON fast seed version", 1, hash.as_mutable_slice());
-    //   return hash.as_slice()[0] == 1;
-    // }
-    const seed = await (0, pbkdf2_sha512_1.pbkdf2_sha512)(entropy, 'TON fast seed version', 1, 64);
-    return seed[0] == 1;
-}
-async function mnemonicToEntropy(mnemonicArray, password) {
-    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L52
-    // td::SecureString Mnemonic::to_entropy() const {
-    //   td::SecureString res(64);
-    //   td::hmac_sha512(join(words_), password_, res.as_mutable_slice());
-    //   return res;
-    // }
-    return await (0, hmac_sha512_1.hmac_sha512)(mnemonicArray.join(' '), password && password.length > 0 ? password : '');
-}
-exports.mnemonicToEntropy = mnemonicToEntropy;
 async function mnemonicToSeed(mnemonicArray, seed, password) {
+    return mnemonicToSeedSync(mnemonicArray, seed, password);
+}
+exports.mnemonicToSeed = mnemonicToSeed;
+function mnemonicToSeedSync(mnemonicArray, seed, password) {
     // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L58
     // td::SecureString Mnemonic::to_seed() const {
     //   td::SecureString hash(64);
     //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON default seed", PBKDF_ITERATIONS, hash.as_mutable_slice());
     //   return hash;
     // }
-    const entropy = await mnemonicToEntropy(mnemonicArray, password);
-    return await (0, pbkdf2_sha512_1.pbkdf2_sha512)(entropy, seed, PBKDF_ITERATIONS, 64);
+    const entropy = mnemonicToEntropy(mnemonicArray, password);
+    return (0, pbkdf2_sha512_1.pbkdf2_sha512_sync)(entropy, seed, PBKDF_ITERATIONS, 64);
 }
-exports.mnemonicToSeed = mnemonicToSeed;
+exports.mnemonicToSeedSync = mnemonicToSeedSync;
 /**
  * Extract private key from mnemonic
  * @param mnemonicArray mnemonic array
@@ -71,15 +37,25 @@ exports.mnemonicToSeed = mnemonicToSeed;
  * @returns Key Pair
  */
 async function mnemonicToPrivateKey(mnemonicArray, password) {
+    return mnemonicToPrivateKeySync(mnemonicArray, password);
+}
+exports.mnemonicToPrivateKey = mnemonicToPrivateKey;
+/**
+ * Extract private key from mnemonic
+ * @param mnemonicArray mnemonic array
+ * @param password mnemonic password
+ * @returns Key Pair
+ */
+function mnemonicToPrivateKeySync(mnemonicArray, password) {
     // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L64
     // td::Ed25519::PrivateKey Mnemonic::to_private_key() const {
     //   return td::Ed25519::PrivateKey(td::SecureString(as_slice(to_seed()).substr(0, td::Ed25519::PrivateKey::LENGTH)));
     // }
     mnemonicArray = normalizeMnemonic(mnemonicArray);
-    const seed = (await mnemonicToSeed(mnemonicArray, 'TON default seed', password));
+    const seed = mnemonicToSeedSync(mnemonicArray, 'TON default seed', password);
     return (0, nacl_1.keyPairFromSeed)(seed.subarray(0, 32));
 }
-exports.mnemonicToPrivateKey = mnemonicToPrivateKey;
+exports.mnemonicToPrivateKeySync = mnemonicToPrivateKeySync;
 /**
  * Convert mnemonic to wallet key pair
  * @param mnemonicArray mnemonic array
@@ -87,11 +63,21 @@ exports.mnemonicToPrivateKey = mnemonicToPrivateKey;
  * @returns Key Pair
  */
 async function mnemonicToWalletKey(mnemonicArray, password) {
-    let seedPk = await mnemonicToPrivateKey(mnemonicArray, password);
+    return mnemonicToWalletKeySync(mnemonicArray, password);
+}
+exports.mnemonicToWalletKey = mnemonicToWalletKey;
+/**
+ * Convert mnemonic to wallet key pair
+ * @param mnemonicArray mnemonic array
+ * @param password mnemonic password
+ * @returns Key Pair
+ */
+function mnemonicToWalletKeySync(mnemonicArray, password) {
+    let seedPk = mnemonicToPrivateKeySync(mnemonicArray, password);
     let seedSecret = seedPk.secretKey.subarray(0, 32);
     return (0, nacl_1.keyPairFromSeed)(seedSecret);
 }
-exports.mnemonicToWalletKey = mnemonicToWalletKey;
+exports.mnemonicToWalletKeySync = mnemonicToWalletKeySync;
 /**
  * Convert mnemonics to HD seed
  * @param mnemonicArray mnemonic array
@@ -99,10 +85,20 @@ exports.mnemonicToWalletKey = mnemonicToWalletKey;
  * @returns 64 byte seed
  */
 async function mnemonicToHDSeed(mnemonicArray, password) {
-    mnemonicArray = normalizeMnemonic(mnemonicArray);
-    return (await mnemonicToSeed(mnemonicArray, 'TON HD Keys seed', password));
+    return mnemonicToHDSeedSync(mnemonicArray, password);
 }
 exports.mnemonicToHDSeed = mnemonicToHDSeed;
+/**
+ * Convert mnemonics to HD seed
+ * @param mnemonicArray mnemonic array
+ * @param password mnemonic password
+ * @returns 64 byte seed
+ */
+function mnemonicToHDSeedSync(mnemonicArray, password) {
+    mnemonicArray = normalizeMnemonic(mnemonicArray);
+    return mnemonicToSeedSync(mnemonicArray, 'TON HD Keys seed', password);
+}
+exports.mnemonicToHDSeedSync = mnemonicToHDSeedSync;
 /**
  * Validate Mnemonic
  * @param mnemonicArray mnemonic array
@@ -110,7 +106,16 @@ exports.mnemonicToHDSeed = mnemonicToHDSeed;
  * @returns true for valid mnemonic
  */
 async function mnemonicValidate(mnemonicArray, password) {
-    // Normalize
+    return mnemonicValidateSync(mnemonicArray, password);
+}
+exports.mnemonicValidate = mnemonicValidate;
+/**
+ * Validate Mnemonic
+ * @param mnemonicArray mnemonic array
+ * @param password mnemonic password
+ * @returns true for valid mnemonic
+ */
+function mnemonicValidateSync(mnemonicArray, password) {
     mnemonicArray = normalizeMnemonic(mnemonicArray);
     // Validate mnemonic words
     for (let word of mnemonicArray) {
@@ -120,14 +125,14 @@ async function mnemonicValidate(mnemonicArray, password) {
     }
     // Check password
     if (password && password.length > 0) {
-        if (!await isPasswordNeeded(mnemonicArray)) {
+        if (!isPasswordNeeded(mnemonicArray)) {
             return false;
         }
     }
     // Validate seed
-    return await isBasicSeed(await mnemonicToEntropy(mnemonicArray, password));
+    return isBasicSeed(mnemonicToEntropy(mnemonicArray, password));
 }
-exports.mnemonicValidate = mnemonicValidate;
+exports.mnemonicValidateSync = mnemonicValidateSync;
 /**
  * Generate new Mnemonic
  * @param wordsCount number of words to generate
@@ -135,30 +140,40 @@ exports.mnemonicValidate = mnemonicValidate;
  * @returns
  */
 async function mnemonicNew(wordsCount = 24, password) {
+    return mnemonicNewSync(wordsCount, password);
+}
+exports.mnemonicNew = mnemonicNew;
+/**
+ * Generate new Mnemonic
+ * @param wordsCount number of words to generate
+ * @param password mnemonic password
+ * @returns
+ */
+function mnemonicNewSync(wordsCount = 24, password) {
     // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L159
     let mnemonicArray = [];
     while (true) {
         // Regenerate new mnemonics
         mnemonicArray = [];
         for (let i = 0; i < wordsCount; i++) {
-            let ind = await (0, getSecureRandom_1.getSecureRandomNumber)(0, wordlist_1.wordlist.length);
+            let ind = (0, getSecureRandom_1.getSecureRandomNumberSync)(0, wordlist_1.wordlist.length);
             mnemonicArray.push(wordlist_1.wordlist[ind]);
         }
         // Chek password conformance
         if (password && password.length > 0) {
-            if (!await isPasswordNeeded(mnemonicArray)) {
+            if (!isPasswordNeeded(mnemonicArray)) {
                 continue;
             }
         }
         // Check if basic seed correct
-        if (!(await isBasicSeed(await mnemonicToEntropy(mnemonicArray, password)))) {
+        if (!(isBasicSeed(mnemonicToEntropy(mnemonicArray, password)))) {
             continue;
         }
         break;
     }
     return mnemonicArray;
 }
-exports.mnemonicNew = mnemonicNew;
+exports.mnemonicNewSync = mnemonicNewSync;
 /**
  * Converts bytes to mnemonics array (could be invalid for TON)
  * @param src source buffer
@@ -204,26 +219,62 @@ function mnemonicIndexesToBytes(src) {
     }
     return (0, binary_1.bitsToBytes)(res);
 }
-exports.mnemonicIndexesToBytes = mnemonicIndexesToBytes;
 /**
  * Generates deterministically mnemonics
  * @param seed
  * @param wordsCount
  * @param password
  */
-async function mnemonicFromRandomSeed(seed, wordsCount = 24, password) {
+function mnemonicFromRandomSeed(seed, wordsCount = 24, password) {
     const bytesLength = Math.ceil(wordsCount * 11 / 8);
     let currentSeed = seed;
     while (true) {
         // Create entropy
-        let entropy = await (0, pbkdf2_sha512_1.pbkdf2_sha512)(currentSeed, 'TON mnemonic seed', Math.max(1, Math.floor(PBKDF_ITERATIONS / 256)), bytesLength);
+        let entropy = (0, pbkdf2_sha512_1.pbkdf2_sha512_sync)(currentSeed, 'TON mnemonic seed', Math.max(1, Math.floor(PBKDF_ITERATIONS / 256)), bytesLength);
         // Create mnemonics
         let mnemonics = bytesToMnemonics(entropy, wordsCount);
         // Check if mnemonics are valid
-        if (await mnemonicValidate(mnemonics, password)) {
+        if (mnemonicValidateSync(mnemonics, password)) {
             return mnemonics;
         }
         currentSeed = entropy;
     }
 }
 exports.mnemonicFromRandomSeed = mnemonicFromRandomSeed;
+function isPasswordNeeded(mnemonicArray) {
+    const passlessEntropy = mnemonicToEntropy(mnemonicArray);
+    return isPasswordSeed(passlessEntropy) && !isBasicSeed(passlessEntropy);
+}
+function normalizeMnemonic(src) {
+    return src.map((v) => v.toLowerCase().trim());
+}
+function isBasicSeed(entropy) {
+    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L68
+    // bool Mnemonic::is_basic_seed() {
+    //   td::SecureString hash(64);
+    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON seed version", td::max(1, PBKDF_ITERATIONS / 256),
+    //                     hash.as_mutable_slice());
+    //   return hash.as_slice()[0] == 0;
+    // }
+    const seed = (0, pbkdf2_sha512_1.pbkdf2_sha512_sync)(entropy, 'TON seed version', Math.max(1, Math.floor(PBKDF_ITERATIONS / 256)), 64);
+    return seed[0] == 0;
+}
+function isPasswordSeed(entropy) {
+    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L75
+    // bool Mnemonic::is_password_seed() {
+    //   td::SecureString hash(64);
+    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON fast seed version", 1, hash.as_mutable_slice());
+    //   return hash.as_slice()[0] == 1;
+    // }
+    const seed = (0, pbkdf2_sha512_1.pbkdf2_sha512_sync)(entropy, 'TON fast seed version', 1, 64);
+    return seed[0] == 1;
+}
+function mnemonicToEntropy(mnemonicArray, password) {
+    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L52
+    // td::SecureString Mnemonic::to_entropy() const {
+    //   td::SecureString res(64);
+    //   td::hmac_sha512(join(words_), password_, res.as_mutable_slice());
+    //   return res;
+    // }
+    return (0, hmac_sha512_1.hmac_sha512_sync)(mnemonicArray.join(' '), password && password.length > 0 ? password : '');
+}

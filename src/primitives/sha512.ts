@@ -13,9 +13,9 @@ export function sha512_sync(source: Buffer | string): Buffer {
 }
 
 export async function sha512_fallback(source: Buffer | string): Promise<Buffer> {
-    return Promise.resolve(sha512_sync(source));
+    return sha512_sync(source)
 }
 
 export async function sha512(source: Buffer | string): Promise<Buffer> {
-    return Promise.resolve(sha512_sync(source));
+    return sha512_sync(source)
 }

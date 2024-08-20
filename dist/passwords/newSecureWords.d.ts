@@ -6,3 +6,4 @@
  * LICENSE file in the root directory of this source tree.
  */
 export declare function newSecureWords(size?: number): Promise<string[]>;
+export declare function newSecureWordsSync(size?: number): string[];

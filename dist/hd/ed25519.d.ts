@@ -8,5 +8,8 @@
 /// <reference types="node" />
 import { HDKeysState } from "./state";
 export declare function getED25519MasterKeyFromSeed(seed: Buffer): Promise<HDKeysState>;
+export declare function getED25519MasterKeyFromSeedSync(seed: Buffer): HDKeysState;
 export declare function deriveED25519HardenedKey(parent: HDKeysState, index: number): Promise<HDKeysState>;
+export declare function deriveED25519HardenedKeySync(parent: HDKeysState, index: number): HDKeysState;
 export declare function deriveEd25519Path(seed: Buffer, path: number[]): Promise<Buffer>;
+export declare function deriveEd25519PathSync(seed: Buffer, path: number[]): Buffer;

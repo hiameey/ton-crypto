@@ -8,5 +8,8 @@
 /// <reference types="node" />
 import { HDKeysState } from "./state";
 export declare function getSymmetricMasterKeyFromSeed(seed: Buffer): Promise<HDKeysState>;
+export declare function getSymmetricMasterKeyFromSeedSync(seed: Buffer): HDKeysState;
 export declare function deriveSymmetricHardenedKey(parent: HDKeysState, offset: string): Promise<HDKeysState>;
+export declare function deriveSymmetricHardenedKeySync(parent: HDKeysState, offset: string): HDKeysState;
 export declare function deriveSymmetricPath(seed: Buffer, path: string[]): Promise<Buffer>;
+export declare function deriveSymmetricPathSync(seed: Buffer, path: string[]): Buffer;

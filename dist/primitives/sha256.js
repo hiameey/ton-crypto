@@ -17,10 +17,10 @@ function sha256_sync(source) {
 }
 exports.sha256_sync = sha256_sync;
 async function sha256_fallback(source) {
-    return Promise.resolve(sha256_sync(source));
+    return sha256_sync(source);
 }
 exports.sha256_fallback = sha256_fallback;
-function sha256(source) {
-    return Promise.resolve(sha256_sync(source));
+async function sha256(source) {
+    return sha256_sync(source);
 }
 exports.sha256 = sha256;
