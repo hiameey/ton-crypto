@@ -15,51 +15,6 @@ import { wordlist } from './wordlist';
 
 const PBKDF_ITERATIONS = 100000;
 
-function isPasswordNeeded(mnemonicArray: string[]): boolean {
-    const passlessEntropy = mnemonicToEntropy(mnemonicArray);
-
-    return isPasswordSeed(passlessEntropy) && !isBasicSeed(passlessEntropy)
-}
-
-function normalizeMnemonic(src: string[]) {
-    return src.map((v) => v.toLowerCase().trim());
-}
-
-function isBasicSeed(entropy: Buffer | string): boolean {
-    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L68
-    // bool Mnemonic::is_basic_seed() {
-    //   td::SecureString hash(64);
-    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON seed version", td::max(1, PBKDF_ITERATIONS / 256),
-    //                     hash.as_mutable_slice());
-    //   return hash.as_slice()[0] == 0;
-    // }
-    const seed = pbkdf2_sha512_sync(entropy, 'TON seed version', Math.max(1, Math.floor(PBKDF_ITERATIONS / 256)), 64);
-
-    return seed[0] == 0
-}
-
-function isPasswordSeed(entropy: Buffer | string): boolean {
-    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L75
-    // bool Mnemonic::is_password_seed() {
-    //   td::SecureString hash(64);
-    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON fast seed version", 1, hash.as_mutable_slice());
-    //   return hash.as_slice()[0] == 1;
-    // }
-    const seed = pbkdf2_sha512_sync(entropy, 'TON fast seed version', 1, 64);
-
-    return seed[0] == 1
-}
-
-function mnemonicToEntropy(mnemonicArray: string[], password?: string | null | undefined): Buffer {
-    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L52
-    // td::SecureString Mnemonic::to_entropy() const {
-    //   td::SecureString res(64);
-    //   td::hmac_sha512(join(words_), password_, res.as_mutable_slice());
-    //   return res;
-    // }
-    return hmac_sha512_sync(mnemonicArray.join(' '), password && password.length > 0 ? password : '')
-}
-
 export async function mnemonicToSeed(mnemonicArray: string[], seed: string, password?: string | null | undefined): Promise<Buffer> {
     return Promise.resolve(mnemonicToSeedSync(mnemonicArray, seed, password))
 }
@@ -300,4 +255,49 @@ export function mnemonicFromRandomSeed(seed: Buffer, wordsCount: number = 24, pa
 
         currentSeed = entropy;
     }
+}
+
+function isPasswordNeeded(mnemonicArray: string[]): boolean {
+    const passlessEntropy = mnemonicToEntropy(mnemonicArray);
+
+    return isPasswordSeed(passlessEntropy) && !isBasicSeed(passlessEntropy)
+}
+
+function normalizeMnemonic(src: string[]) {
+    return src.map((v) => v.toLowerCase().trim());
+}
+
+function isBasicSeed(entropy: Buffer | string): boolean {
+    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L68
+    // bool Mnemonic::is_basic_seed() {
+    //   td::SecureString hash(64);
+    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON seed version", td::max(1, PBKDF_ITERATIONS / 256),
+    //                     hash.as_mutable_slice());
+    //   return hash.as_slice()[0] == 0;
+    // }
+    const seed = pbkdf2_sha512_sync(entropy, 'TON seed version', Math.max(1, Math.floor(PBKDF_ITERATIONS / 256)), 64);
+
+    return seed[0] == 0
+}
+
+function isPasswordSeed(entropy: Buffer | string): boolean {
+    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L75
+    // bool Mnemonic::is_password_seed() {
+    //   td::SecureString hash(64);
+    //   td::pbkdf2_sha512(as_slice(to_entropy()), "TON fast seed version", 1, hash.as_mutable_slice());
+    //   return hash.as_slice()[0] == 1;
+    // }
+    const seed = pbkdf2_sha512_sync(entropy, 'TON fast seed version', 1, 64);
+
+    return seed[0] == 1
+}
+
+function mnemonicToEntropy(mnemonicArray: string[], password?: string | null | undefined): Buffer {
+    // https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/tonlib/tonlib/keys/Mnemonic.cpp#L52
+    // td::SecureString Mnemonic::to_entropy() const {
+    //   td::SecureString res(64);
+    //   td::hmac_sha512(join(words_), password_, res.as_mutable_slice());
+    //   return res;
+    // }
+    return hmac_sha512_sync(mnemonicArray.join(' '), password && password.length > 0 ? password : '')
 }
