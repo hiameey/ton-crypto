@@ -14,7 +14,7 @@ const HARDENED_OFFSET = 0x80000000;
 const MNEMONICS_SEED = 'TON Mnemonics HD seed';
 
 export async function getMnemonicsMasterKeyFromSeed(seed: Buffer): Promise<HDKeysState> {
-    return Promise.resolve(getMnemonicsMasterKeyFromSeedSync(seed))
+    return getMnemonicsMasterKeyFromSeedSync(seed)
 }
 
 export function getMnemonicsMasterKeyFromSeedSync(seed: Buffer): HDKeysState {
@@ -29,11 +29,7 @@ export function getMnemonicsMasterKeyFromSeedSync(seed: Buffer): HDKeysState {
 }
 
 export async function deriveMnemonicHardenedKey(parent: HDKeysState, index: number): Promise<HDKeysState> {
-    if (index >= HARDENED_OFFSET) {
-        return Promise.reject(Error('Key index must be less than offset'));
-    }
-
-    return Promise.reject(deriveMnemonicHardenedKeySync(parent, index))
+    return deriveMnemonicHardenedKeySync(parent, index)
 }
 
 export function deriveMnemonicHardenedKeySync(parent: HDKeysState, index: number): HDKeysState {
@@ -58,7 +54,7 @@ export function deriveMnemonicHardenedKeySync(parent: HDKeysState, index: number
 }
 
 export async function deriveMnemonicsPath(seed: Buffer, path: number[], wordsCount: number = 24, password?: string | null | undefined): Promise<string[]> {
-    return Promise.resolve(deriveMnemonicsPathSync(seed, path, wordsCount, password))
+    return deriveMnemonicsPathSync(seed, path, wordsCount, password)
 }
 
 export function deriveMnemonicsPathSync(seed: Buffer, path: number[], wordsCount: number = 24, password?: string | null | undefined): string[] {

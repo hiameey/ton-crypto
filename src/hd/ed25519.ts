@@ -13,7 +13,7 @@ const ED25519_CURVE = 'ed25519 seed';
 const HARDENED_OFFSET = 0x80000000;
 
 export async function getED25519MasterKeyFromSeed(seed: Buffer): Promise<HDKeysState> {
-    return Promise.resolve(getED25519MasterKeyFromSeedSync(seed))
+    return getED25519MasterKeyFromSeedSync(seed)
 }
 
 export function getED25519MasterKeyFromSeedSync(seed: Buffer): HDKeysState {
@@ -28,11 +28,7 @@ export function getED25519MasterKeyFromSeedSync(seed: Buffer): HDKeysState {
 }
 
 export async function deriveED25519HardenedKey(parent: HDKeysState, index: number): Promise<HDKeysState> {
-    if (index >= HARDENED_OFFSET) {
-        return Promise.reject(Error('Key index must be less than offset'));
-    }
-
-    return Promise.resolve(deriveED25519HardenedKeySync(parent, index))
+    return deriveED25519HardenedKeySync(parent, index)
 }
 
 export function deriveED25519HardenedKeySync(parent: HDKeysState, index: number): HDKeysState {
@@ -57,7 +53,7 @@ export function deriveED25519HardenedKeySync(parent: HDKeysState, index: number)
 }
 
 export async function deriveEd25519Path(seed: Buffer, path: number[]): Promise<Buffer> {
-    return Promise.resolve(deriveEd25519PathSync(seed, path))
+    return deriveEd25519PathSync(seed, path)
 }
 
 export function deriveEd25519PathSync(seed: Buffer, path: number[]): Buffer {

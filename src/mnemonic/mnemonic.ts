@@ -16,7 +16,7 @@ import { wordlist } from './wordlist';
 const PBKDF_ITERATIONS = 100000;
 
 export async function mnemonicToSeed(mnemonicArray: string[], seed: string, password?: string | null | undefined): Promise<Buffer> {
-    return Promise.resolve(mnemonicToSeedSync(mnemonicArray, seed, password))
+    return mnemonicToSeedSync(mnemonicArray, seed, password)
 }
 
 export function mnemonicToSeedSync(mnemonicArray: string[], seed: string, password?: string | null | undefined): Buffer {
@@ -38,7 +38,7 @@ export function mnemonicToSeedSync(mnemonicArray: string[], seed: string, passwo
  * @returns Key Pair
  */
 export async function mnemonicToPrivateKey(mnemonicArray: string[], password?: string | null | undefined): Promise<KeyPair> {
-    return Promise.resolve(mnemonicToPrivateKeySync(mnemonicArray, password))
+    return mnemonicToPrivateKeySync(mnemonicArray, password)
 }
 
 /**
@@ -65,7 +65,7 @@ export function mnemonicToPrivateKeySync(mnemonicArray: string[], password?: str
  * @returns Key Pair
  */
 export async function mnemonicToWalletKey(mnemonicArray: string[], password?: string | null | undefined): Promise<KeyPair> {
-    return Promise.resolve(mnemonicToWalletKeySync(mnemonicArray, password))
+    return mnemonicToWalletKeySync(mnemonicArray, password)
 }
 
 /**
@@ -88,7 +88,7 @@ export function mnemonicToWalletKeySync(mnemonicArray: string[], password?: stri
  * @returns 64 byte seed
  */
 export async function mnemonicToHDSeed(mnemonicArray: string[], password?: string | null | undefined): Promise<Buffer> {
-    return Promise.resolve(mnemonicToHDSeedSync(mnemonicArray, password))
+    return mnemonicToHDSeedSync(mnemonicArray, password)
 }
 
 /**
@@ -110,7 +110,7 @@ export function mnemonicToHDSeedSync(mnemonicArray: string[], password?: string 
  * @returns true for valid mnemonic
  */
 export async function mnemonicValidate(mnemonicArray: string[], password?: string | null | undefined): Promise<boolean> {
-    return Promise.resolve(mnemonicValidateSync(mnemonicArray, password))
+    return mnemonicValidateSync(mnemonicArray, password)
 }
 
 /**
@@ -147,7 +147,7 @@ export function mnemonicValidateSync(mnemonicArray: string[], password?: string 
  * @returns
  */
 export async function mnemonicNew(wordsCount: number = 24, password?: string | null | undefined): Promise<string[]> {
-    return Promise.resolve(mnemonicNewSync(wordsCount, password))
+    return mnemonicNewSync(wordsCount, password)
 }
 
 /**

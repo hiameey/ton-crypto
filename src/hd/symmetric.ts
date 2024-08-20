@@ -12,7 +12,7 @@ import { HDKeysState } from "./state";
 const SYMMETRIC_SEED = 'Symmetric key seed';
 
 export async function getSymmetricMasterKeyFromSeed(seed: Buffer): Promise<HDKeysState> {
-    return Promise.resolve(getSymmetricMasterKeyFromSeedSync(seed))
+    return getSymmetricMasterKeyFromSeedSync(seed)
 }
 
 export function getSymmetricMasterKeyFromSeedSync(seed: Buffer): HDKeysState {
@@ -27,7 +27,7 @@ export function getSymmetricMasterKeyFromSeedSync(seed: Buffer): HDKeysState {
 }
 
 export async function deriveSymmetricHardenedKey(parent: HDKeysState, offset: string): Promise<HDKeysState> {
-    return Promise.resolve(deriveSymmetricHardenedKeySync(parent, offset))
+    return deriveSymmetricHardenedKeySync(parent, offset)
 }
 
 export function deriveSymmetricHardenedKeySync(parent: HDKeysState, offset: string): HDKeysState {
@@ -46,7 +46,7 @@ export function deriveSymmetricHardenedKeySync(parent: HDKeysState, offset: stri
 }
 
 export async function deriveSymmetricPath(seed: Buffer, path: string[]) {
-    return Promise.resolve(deriveSymmetricPathSync(seed, path))
+    return deriveSymmetricPathSync(seed, path)
 }
 
 export function deriveSymmetricPathSync(seed: Buffer, path: string[]) {

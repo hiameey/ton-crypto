@@ -9,7 +9,7 @@
 import * as crypto from "node:crypto";
 
 export async function getSecureRandomBytes(size: number): Promise<Buffer> {
-    return Promise.resolve(crypto.randomBytes(size))
+    return crypto.randomBytes(size)
 }
 
 export function getSecureRandomBytesSync(size: number): Buffer {
@@ -17,7 +17,7 @@ export function getSecureRandomBytesSync(size: number): Buffer {
 }
 
 export async function getSecureRandomWords(size: number): Promise<Uint16Array> {
-    return Promise.resolve(getSecureRandomWordsSync(size))
+    return getSecureRandomWordsSync(size)
 }
 
 export function getSecureRandomWordsSync(size: number): Uint16Array {
@@ -28,7 +28,7 @@ export function getSecureRandomWordsSync(size: number): Uint16Array {
 }
 
 export async function getSecureRandomNumber(min: number, max: number): Promise<number> {
-    return Promise.resolve(getSecureRandomNumberSync(min, max))
+    return getSecureRandomNumberSync(min, max)
 }
 
 export function getSecureRandomNumberSync(min: number, max: number): number {

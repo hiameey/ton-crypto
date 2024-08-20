@@ -9,7 +9,7 @@
 import { newSecureWordsSync } from "./newSecureWords";
 
 export async function newSecurePassphrase(size: number = 6): Promise<string> {
-    return Promise.resolve(newSecurePassphraseSync(size));
+    return newSecurePassphraseSync(size)
 }
 
 export function newSecurePassphraseSync(size: number = 6): string {

@@ -17,8 +17,8 @@ export function hmac_sha512_sync(key: string | Buffer, data: string | Buffer): B
         .digest()
 }
 
-export function hmac_sha512(key: string | Buffer, data: string | Buffer): Promise<Buffer> {
-    return Promise.resolve(hmac_sha512_sync(key, data));
+export async function hmac_sha512(key: string | Buffer, data: string | Buffer): Promise<Buffer> {
+    return hmac_sha512_sync(key, data)
 }
 
 export async function hmac_sha512_fallback(key: string | Buffer, data: string | Buffer): Promise<Buffer> {

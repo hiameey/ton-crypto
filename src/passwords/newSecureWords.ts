@@ -10,7 +10,7 @@ import { getSecureRandomNumberSync } from "../primitives/getSecureRandom";
 import { wordlist } from "./wordlist";
 
 export async function newSecureWords(size: number = 6): Promise<string[]> {
-    return Promise.resolve(newSecureWordsSync(size))
+    return newSecureWordsSync(size)
 }
 
 export function newSecureWordsSync(size: number = 6): string[] {
