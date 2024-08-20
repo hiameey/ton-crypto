@@ -36,7 +36,10 @@ export {
     getED25519MasterKeyFromSeed, deriveED25519HardenedKey, deriveEd25519Path,
     getED25519MasterKeyFromSeedSync, deriveED25519HardenedKeySync, deriveEd25519PathSync
 } from './hd/ed25519';
-export { getSymmetricMasterKeyFromSeed, deriveSymmetricHardenedKey, deriveSymmetricPath } from './hd/symmetric';
+export {
+    getSymmetricMasterKeyFromSeed, deriveSymmetricHardenedKey, deriveSymmetricPath,
+    getSymmetricMasterKeyFromSeedSync, deriveSymmetricHardenedKeySync, deriveSymmetricPathSync
+} from './hd/symmetric';
 export {
     deriveMnemonicsPath, deriveMnemonicHardenedKey, getMnemonicsMasterKeyFromSeed,
     deriveMnemonicsPathSync, deriveMnemonicHardenedKeySync, getMnemonicsMasterKeyFromSeedSync
