@@ -32,6 +32,9 @@ export { sealBox, openBox } from './primitives/nacl';
 export { keyPairFromSeed, keyPairFromSecretKey, sign, signVerify } from './primitives/nacl';
 
 export { HDKeysState } from './hd/state';
-export { getED25519MasterKeyFromSeed, deriveED25519HardenedKey, deriveEd25519Path } from './hd/ed25519';
+export {
+    getED25519MasterKeyFromSeed, deriveED25519HardenedKey, deriveEd25519Path,
+    getED25519MasterKeyFromSeedSync, deriveED25519HardenedKeySync, deriveEd25519PathSync
+} from './hd/ed25519';
 export { getSymmetricMasterKeyFromSeed, deriveSymmetricHardenedKey, deriveSymmetricPath } from './hd/symmetric';
 export { deriveMnemonicsPath, deriveMnemonicHardenedKey, getMnemonicsMasterKeyFromSeed } from './hd/mnemonics';
