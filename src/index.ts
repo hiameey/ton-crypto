@@ -17,8 +17,8 @@ export {
     getSecureRandomBytes, getSecureRandomWords, getSecureRandomNumber,
     getSecureRandomBytesSync, getSecureRandomWordsSync, getSecureRandomNumberSync
 } from './primitives/getSecureRandom';
-export { newSecureWords } from './passwords/newSecureWords';
-export { newSecurePassphrase } from './passwords/newSecurePassphrase';
+export { newSecureWords, newSecureWordsSync } from './passwords/newSecureWords';
+export { newSecurePassphrase, newSecurePassphraseSync } from './passwords/newSecurePassphrase';
 
 export { KeyPair } from './primitives/nacl';
 
