@@ -22,7 +22,10 @@ export { newSecurePassphrase, newSecurePassphraseSync } from './passwords/newSec
 
 export { KeyPair } from './primitives/nacl';
 
-export { mnemonicNew, mnemonicValidate, mnemonicToPrivateKey, mnemonicToWalletKey, mnemonicToSeed, mnemonicToHDSeed } from './mnemonic/mnemonic';
+export {
+    mnemonicNew, mnemonicValidate, mnemonicToPrivateKey, mnemonicToWalletKey, mnemonicToSeed, mnemonicToHDSeed,
+    mnemonicNewSync, mnemonicValidateSync, mnemonicToPrivateKeySync, mnemonicToWalletKeySync, mnemonicToSeedSync, mnemonicToHDSeedSync
+} from './mnemonic/mnemonic';
 export { wordlist as mnemonicWordList } from './mnemonic/wordlist';
 
 export { sealBox, openBox } from './primitives/nacl';

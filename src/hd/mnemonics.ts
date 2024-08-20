@@ -51,5 +51,5 @@ export async function deriveMnemonicsPath(seed: Buffer, path: number[], wordsCou
         remaining = remaining.slice(1);
         state = await deriveMnemonicHardenedKey(state, index);
     }
-    return await mnemonicFromRandomSeed(state.key, wordsCount, password);
+    return mnemonicFromRandomSeed(state.key, wordsCount, password);
 }
