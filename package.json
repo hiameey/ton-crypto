@@ -34,7 +34,7 @@
     "webpack": "^5.51.2"
   },
   "dependencies": {
-    "sodium-native": "^4.1.1"
+    "sodium-native": "^4.3.3"
   },
   "packageManager": "yarn@1.22.22"
 }
